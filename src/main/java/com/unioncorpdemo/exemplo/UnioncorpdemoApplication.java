@@ -27,6 +27,22 @@ public class UnioncorpdemoApplication {
         return forgotPasswordRequest;
     }
 
+    @PostMapping("/api/forgot-password-exposicao-dados")
+    public ResponseEntity<Object> handlePasswordResetLinkExposicaoDados(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+
+        String email = forgotPasswordRequest.getEmail();
+        boolean isValidEmail = EmailValidator.validateEmail(email);
+
+        if (isValidEmail) {
+            LinkGeneratorResponse response = ResentLinkGenerator.generateResetLinkFor(email);
+            Emailnotification.sendResetLinkTo(email, response.getResetLink());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+
+    }
+
     @PostMapping("/api/forgot-password")
     public ResponseEntity<Object> handlePasswordResetLink(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
 
